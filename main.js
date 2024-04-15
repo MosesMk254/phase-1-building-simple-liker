@@ -1,20 +1,39 @@
 // Defining text characters for the empty and full hearts for you to use later.
-const EMPTY_HEART = '♡'
-const FULL_HEART = '♥'
+const EMPTY_HEART = "♡";
+const FULL_HEART = "♥";
 
 // Your JavaScript code goes here!
+const errorModal = document.getElementById("modal");
+const errorMessage = document.getElementById("modal-message");
 
+errorModal.classList.add("hidden");
 
+function displayError(message) {
+  errorMessage.textContent = message;
+  errorModal.classList.remove("hidden");
+  setTimeout(() => {
+    errorModal.classList.add("hidden");
+  }, 3000);
+}
 
+function toggleHeart(heart) {
+  if (heart.textContent === EMPTY_HEART) {
+    heart.textContent = FULL_HEART;
+    heart.classList.add("activated-heart");
+  } else {
+    heart.textContent = EMPTY_HEART;
+    heart.classList.remove("activated-heart");
+  }
+}
 
 //------------------------------------------------------------------------------
 // Don't change the code below: this function mocks the server response
 //------------------------------------------------------------------------------
 
-function mimicServerCall(url="http://mimicServer.example.com", config={}) {
-  return new Promise(function(resolve, reject) {
-    setTimeout(function() {
-      let isRandomFailure = Math.random() < .2
+function mimicServerCall(url = "http://mimicServer.example.com", config = {}) {
+  return new Promise(function (resolve, reject) {
+    setTimeout(function () {
+      let isRandomFailure = Math.random() < 0.2;
       if (isRandomFailure) {
         reject("Random server error. Try again.");
       } else {
@@ -23,3 +42,15 @@ function mimicServerCall(url="http://mimicServer.example.com", config={}) {
     }, 300);
   });
 }
+
+const hearts = document.querySelectorAll(".like-glyph");
+hearts.forEach((heart) => {
+  heart.addEventListener("click", async function () {
+    try {
+      await mimicServerCall();
+      toggleHeart(heart);
+    } catch (error) {
+      displayError(error);
+    }
+  });
+});
